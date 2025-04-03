@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 // The hook uses the useState and useEffect hooks from React to manage state and side effects.
 // It is a reusable piece of code that can be used in multiple components to fetch data from an API.
 
-const useFetch = async <T>(fetchFunction: () => Promise<T>, autoFetch = true) => {
+const useFetch = <T>(fetchFunction: () => Promise<T>, autoFetch = true) => {
     const [data, setData] = useState<T | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
@@ -42,3 +42,4 @@ const useFetch = async <T>(fetchFunction: () => Promise<T>, autoFetch = true) =>
 
     return { data, loading, error, fetchData, reset };
 }
+export default useFetch;
