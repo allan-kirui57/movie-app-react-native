@@ -11,9 +11,19 @@ export default function LoginScreen() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = () => {
-    login({ name: "John Doe", email });
-    router.replace("/(tabs)/profile");
+  const handleLogin = async () => {
+    const response = await login(email, password);
+    if (response.success) {
+      router.push({
+        pathname: "/auth/verify-code",
+        params: {
+          email: email,
+          user_id: response.user_id
+        }
+      });
+    } else {
+      alert("Login failed. Please check your credentials.");
+    }
   };
 
   return (
@@ -94,14 +104,6 @@ export default function LoginScreen() {
           <Image
             source={{
               uri: "https://upload.wikimedia.org/wikipedia/commons/0/09/IOS_Google_icon.png",
-            }}
-            className="w-6 h-6"
-          />
-        </TouchableOpacity>
-        <TouchableOpacity className="bg-gray-100 p-4 rounded-xl">
-          <Image
-            source={{
-              uri: "https://upload.wikimedia.org/wikipedia/commons/3/31/Apple_logo_white.svg",
             }}
             className="w-6 h-6"
           />
