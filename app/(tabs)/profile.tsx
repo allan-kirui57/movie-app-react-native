@@ -1,62 +1,58 @@
-import { View, Text, TouchableOpacity, Image } from 'react-native'
-import React from 'react'
-import {images } from '@/constants/images'
-import { useAuth } from '@/context/AuthContext'
-import { Redirect } from 'expo-router';
-
-// Placeholder for user profile info
-const UserProfile = () => (
-  
-  <View className="items-center mb-4">
-    <View className="w-20 h-20 rounded-full bg-gray-200 mb-2" />
-    <Text className="text-xl font-semibold text-gray-50">Allan Doe</Text>
-    <Text className="text-gray-50 ">allan@example.com</Text>
-  </View>
-)
-
-// Placeholder for settings
-const Settings = () => (
-  <View className="w-full px-4 mb-4">
-    <TouchableOpacity className="py-3 border-b border-gray-200 bg-gray-500 rounded-md mb-2 p-2">
-      <Text className="text-base text-gray-50">Account Settings</Text>
-    </TouchableOpacity>
-    <TouchableOpacity className="py-3 border-b border-gray-200 bg-gray-500 rounded-md p-2">
-      <Text className="text-base text-gray-50">Privacy</Text>
-    </TouchableOpacity>
-    <TouchableOpacity className="py-3">
-      <Text className="text-base">Logout</Text>
-    </TouchableOpacity>
-  </View>
-)
-
-// Placeholder for user posts
-const UserPosts = () => (
-  <View className="w-full px-4">
-    <Text className="text-lg font-bold mb-2 ">Your Posts</Text>
-    <View className="bg-gray-500 p-3 rounded mb-2">
-      <Text className='text-gray-50'>Post #1: My favorite movie!</Text>
-    </View>
-    <View className="text-gray-500 p-3 rounded mb-2">
-      <Text className='text-gray-50'>Post #2: Just watched something awesome.</Text>
-    </View>
-  </View>
-)
+import { View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
+import React from 'react';
+import { useAuth } from '@/context/AuthContext';
+import { Redirect, useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 
 const Profile = () => {
   const { user, logout } = useAuth();
+  const router = useRouter();
 
   if (!user) {
     return <Redirect href="/auth/login" />;
   }
-  return (
-    <View className="flex-1 items-center justify-star pt-10 bg-primary px-10 text-gray-50">
-      <Image source={images.bg} className="absolute w-full h-full" />
-    
-      <UserProfile />
-      <Settings />
-      <UserPosts />
-    </View>
-  )
-}
 
-export default Profile
+  return (
+    <ScrollView className="flex-1 bg-white">
+      {/* Header */}
+      <View className="items-center mt-10">
+        <Image
+          source={{ uri: user.avatar || 'https://via.placeholder.com/100' }}
+          className="w-24 h-24 rounded-full"
+        />
+        <Text className="mt-3 text-lg font-bold text-gray-800">{user.name}</Text>
+        <Text className="text-gray-500">@{user.username}</Text>
+
+        <TouchableOpacity
+          onPress={() => router.push('/profile/edit')}
+          className="mt-4 bg-blue-600 px-6 py-2 rounded-lg"
+        >
+          <Text className="text-white font-medium">Edit Profile</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Menu */}
+      <View className="mt-8">
+        <MenuItem
+          icon="lock-closed-outline"
+          label="Change Password"
+          onPress={() => router.push('/profile/change-password')}
+        />
+        <MenuItem icon="help-circle-outline" label="Help & Support" onPress={() => {}} />
+        <MenuItem icon="log-out-outline" label="Log out" onPress={logout} />
+      </View>
+    </ScrollView>
+  );
+};
+
+const MenuItem = ({ icon, label, onPress }: { icon: any; label: string; onPress: () => void }) => (
+  <TouchableOpacity
+    onPress={onPress}
+    className="flex-row items-center px-5 py-4 border-b border-gray-200"
+  >
+    <Ionicons name={icon} size={22} color="#4B5563" />
+    <Text className="ml-4 text-gray-700 text-base">{label}</Text>
+  </TouchableOpacity>
+);
+
+export default Profile;
