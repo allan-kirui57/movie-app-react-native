@@ -1,8 +1,16 @@
 import { icons } from "@/constants/icons";
 import { View, Text, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useAuth } from "@/context/AuthContext";
+import { Redirect } from "expo-router";
 
 const Save = () => {
+   const { user } = useAuth();
+
+  if (!user) {
+    return <Redirect href="/auth/login" />;
+  }
+
   return (
     <SafeAreaView className="bg-primary flex-1 px-10">
       <View className="flex justify-center items-center flex-1 flex-col gap-5">

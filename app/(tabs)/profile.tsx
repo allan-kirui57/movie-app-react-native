@@ -1,9 +1,12 @@
 import { View, Text, TouchableOpacity, Image } from 'react-native'
 import React from 'react'
 import {images } from '@/constants/images'
+import { useAuth } from '@/context/AuthContext'
+import { Redirect } from 'expo-router';
 
 // Placeholder for user profile info
 const UserProfile = () => (
+  
   <View className="items-center mb-4">
     <View className="w-20 h-20 rounded-full bg-gray-200 mb-2" />
     <Text className="text-xl font-semibold text-gray-50">Allan Doe</Text>
@@ -40,11 +43,15 @@ const UserPosts = () => (
 )
 
 const Profile = () => {
+  const { user, logout } = useAuth();
+
+  if (!user) {
+    return <Redirect href="/auth/login" />;
+  }
   return (
     <View className="flex-1 items-center justify-star pt-10 bg-primary px-10 text-gray-50">
       <Image source={images.bg} className="absolute w-full h-full" />
     
-      
       <UserProfile />
       <Settings />
       <UserPosts />
