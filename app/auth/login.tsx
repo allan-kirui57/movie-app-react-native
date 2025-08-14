@@ -7,33 +7,48 @@ import { Ionicons } from "@expo/vector-icons";
 export default function LoginScreen() {
   const router = useRouter();
   const { login } = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+
+  const validate = () => {
+    let valid = true;
+    let newErrors: any = {};
+
+    if (!email.trim()) {
+      newErrors.email = "Email is required";
+      valid = false;
+    }
+    if (!password.trim()) {
+      newErrors.password = "Password is required";
+      valid = false;
+    }
+    setErrors(newErrors);
+    return valid;
+  };
 
   const handleLogin = async () => {
-    const response = await login(email, password);
-    if (response.success) {
+    if (!validate()) return;
+
+    const result = await login(email, password);
+    if (result.success) {
       router.push({
         pathname: "/auth/verify-code",
-        params: {
-          email: email,
-          user_id: response.user_id
-        }
+        params: { user_id: result.user_id },
       });
     } else {
-      alert("Login failed. Please check your credentials.");
+      alert("Invalid login credentials");
     }
   };
 
   return (
     <View className="flex-1 bg-white px-6 pt-16">
-      {/* Title */}
       <Text className="text-center text-2xl font-bold text-blue-500 mb-8">
         MovieApp
       </Text>
 
-      {/* Welcome */}
       <Text className="text-xl font-semibold mb-2">
         Welcome to MovieApp login now!
       </Text>
@@ -47,6 +62,7 @@ export default function LoginScreen() {
         keyboardType="email-address"
         className="bg-gray-100 rounded-xl px-4 py-4 mt-4 text-base"
       />
+      {errors.email && <Text className="text-red-500 mt-1">{errors.email}</Text>}
 
       {/* Password */}
       <View className="flex-row items-center bg-gray-100 rounded-xl px-4 py-4 mt-4">
@@ -66,16 +82,7 @@ export default function LoginScreen() {
           />
         </TouchableOpacity>
       </View>
-
-      {/* Remember me + Forgot password */}
-      <View className="flex-row justify-between items-center mt-3">
-        <TouchableOpacity>
-          <Text className="text-gray-500">Remember me</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text className="text-blue-500">Forgot password?</Text>
-        </TouchableOpacity>
-      </View>
+      {errors.password && <Text className="text-red-500 mt-1">{errors.password}</Text>}
 
       {/* Login button */}
       <TouchableOpacity
@@ -87,26 +94,13 @@ export default function LoginScreen() {
         </Text>
       </TouchableOpacity>
 
-      {/* Or sign in with */}
-      <Text className="text-center text-gray-500 mt-6">Or Sign in with</Text>
-
-      {/* Social buttons */}
-      <View className="flex-row justify-center gap-4 mt-4">
-        <TouchableOpacity className="bg-gray-100 p-4 rounded-xl">
-          <Image
-            source={{
-              uri: "https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png",
-            }}
-            className="w-6 h-6"
-          />
+      {/* Links */}
+      <View className="flex-row justify-between items-center mt-4">
+        <TouchableOpacity onPress={() => router.push("/auth/register")}>
+          <Text className="text-blue-500">Create account</Text>
         </TouchableOpacity>
-        <TouchableOpacity className="bg-gray-100 p-4 rounded-xl">
-          <Image
-            source={{
-              uri: "https://upload.wikimedia.org/wikipedia/commons/0/09/IOS_Google_icon.png",
-            }}
-            className="w-6 h-6"
-          />
+        <TouchableOpacity onPress={() => router.push("/auth/forgot-password")}>
+          <Text className="text-blue-500">Forgot password?</Text>
         </TouchableOpacity>
       </View>
     </View>
