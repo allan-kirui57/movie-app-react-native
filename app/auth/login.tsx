@@ -33,6 +33,7 @@ export default function LoginScreen() {
     if (!validate()) return;
 
     const result = await login(email, password);
+    console.log("Login result:", result);
     if (result.success) {
       router.push({
         pathname: "/auth/verify-code",
